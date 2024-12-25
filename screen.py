@@ -33,6 +33,7 @@ class EnhancedRocketVisualizer:
         # Get max altitude for scaling
         self.max_altitude = self.data['Altitude'].max()
         self.max_time = self.data['Time'].max()
+        self.max_displacement_y = self.data['Displacement_Y'].max()
         
         # Define rocket dimensions
         self.rocket_height = 50
@@ -67,15 +68,19 @@ class EnhancedRocketVisualizer:
         self.ax_main.clear()
         
         ground_y = -100
-        ground_width = 1000
+        y_interval = 1000
+        x_interval = 20
+        ground_width = 3*self.max_displacement_y
+        min_x = -ground_width/3
+        max_x = 2*ground_width/3
         
         # Atmospheric glow
         gradient = np.linspace(0, 1, 100)
         for g in gradient:
             self.ax_main.add_patch(Arc(
-                (0, ground_y), 
-                ground_width + g*50, 
-                (ground_width + g*50)/2,
+                ((min_x + max_x)/2, ground_y), 
+                (y_interval + g*400)/13, 
+                (y_interval + g*400)/2,
                 theta1=0, theta2=180, 
                 color='#1E90FF', 
                 alpha=0.02*(1-g),
@@ -84,30 +89,43 @@ class EnhancedRocketVisualizer:
         
         # Ground arc
         self.ax_main.add_patch(Arc(
-            (0, ground_y), 
-            ground_width, 
-            ground_width/2,
+            ((min_x + max_x)/2, ground_y), 
+            y_interval/13, 
+            y_interval/2,
             theta1=0, theta2=180, 
             color='#1E90FF', 
             alpha=0.5,
             lw=2
         ))
         
-        self.ax_main.set_xlim(-ground_width/2, ground_width/2)
+        self.ax_main.set_xlim(min_x, max_x)
         self.ax_main.set_ylim(ground_y, self.max_altitude * 1.2)
         
         # Grid
         self.ax_main.grid(True, color='#1E90FF', alpha=0.1, linestyle='--', linewidth=0.5)
         
         # Altitude markers
-        altitudes = np.arange(0, self.max_altitude * 1.2, 1000)
+        altitudes = np.arange(0, self.max_altitude * 1.2, y_interval)
         for alt in altitudes:
             self.ax_main.axhline(y=alt, color='#1E90FF', alpha=0.1, linestyle=':')
             if alt > 0:
                 self.ax_main.text(
-                    -ground_width/2 * 0.95, 
+                    min_x * 0.95, 
                     alt, 
                     f'{alt/1000:.0f}km',
+                    color='#4A4A8A',
+                    fontsize=10
+                )
+
+        # Y axis markers
+        y_markers = np.arange(((min_x-x_interval)//x_interval)*x_interval, ((max_x+x_interval)//x_interval)*x_interval, x_interval)
+        for y in y_markers:
+            self.ax_main.axvline(y, color='#1E90FF', alpha=0.1, linestyle=':')
+            if(y >= min_x and y <= max_x):
+                self.ax_main.text(
+                    y, 
+                    ground_y - 200, 
+                    f'{y:.0f}m',
                     color='#4A4A8A',
                     fontsize=10
                 )
@@ -252,7 +270,7 @@ class EnhancedRocketVisualizer:
         self.ax_mission.set_xticks([])
         self.ax_mission.set_yticks([])
 
-    def draw_rocket(self, x, y, velocity,ratio):
+    def draw_rocket(self, x, y, velocity, ratio):
         if velocity < 0:  # Descending
             start = (x, y + self.rocket_height)
             end = (x, y)
@@ -370,7 +388,7 @@ class EnhancedRocketVisualizer:
             self.fig,
             self.update,
             frames=len(self.data),
-            interval=1000,  # Updated to 1 second interval
+            interval=100,  # Updated to 1 second interval
             blit=True
         )
         plt.show()

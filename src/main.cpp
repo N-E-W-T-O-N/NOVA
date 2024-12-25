@@ -35,16 +35,11 @@ void parseConfig(const std::string& fileToOpen, RocketBody& rocket, PropulsionSy
 int main() {
   try {
     // Initialize rocket configuration
-    RocketBody rocket(20.0,           // Length (m)
-                      2.0,            // Diameter (m)
-                      5000.0,         // Wet mass (kg)
-                      2000.0         // Dry mass (kg)
-                      // Vec3(5, 1, 0)); // Reference line (direction of the rocket's body)
-    );
-    // Initialize propulsion system
-    PropulsionSystem propulsion(3000.0);              // 3000 kg of fuel
-    propulsion.addEngine(100000.0, 300.0, 0.5, 20.0); // Add main engine
-    // propulsion.updateThrustDirection(Vec3(1, 1, 0));  // Point thrust at 45°
+    RocketBody rocket(0, 0, 2, 1,     // to not trigger error of dry mass > wet mass
+                  Vec3(5, 1, 0));     // Direction of the reference line of rocket
+    PropulsionSystem propulsion(0);
+    propulsion.updateThrustDirection(Vec3(1, 1, 0)); // Direction of thrust of the rocket
+    parseConfig("src/config.json", rocket, propulsion);
 
     // Set initial state (100m above Earth's surface)
     State initialState(Vec3(Constants::EARTH_RADIUS + 100.0, 0, 0), // Position
