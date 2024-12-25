@@ -2,6 +2,35 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include "../libs/json.hpp"
+
+using json = nlohmann::json;
+
+void parseConfig(const std::string& fileToOpen, RocketBody& rocket, PropulsionSystem& prop){
+  std::ifstream file(fileToOpen);
+  
+  json config;
+  file >> config;
+
+  double length = config["rocket"]["length"];
+  double diameter = config["rocket"]["diameter"];
+  double wetMass = config["rocket"]["wet_mass"];
+  double dryMass = config["rocket"]["dry_mass"];
+  double fuelMass = config["propulsion"]["fuel_mass"];
+  //support for multiple engines
+  const auto& engines = config["propulsion"]["engines"];
+
+  rocket = RocketBody(length,diameter,wetMass,dryMass);
+  prop = PropulsionSystem(fuelMass);
+
+  for(const auto& engine : engines){
+    double thrust = engine["thrust"];
+    double burn_rate = engine["burn_rate"];
+    double efficiency = engine["efficiency"];
+    double nozzleDiameter = engine["nozzle_diameter"];
+    prop.addEngine(thrust, burn_rate, efficiency, nozzleDiameter);
+  }
+}
 
 int main() {
   try {

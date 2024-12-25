@@ -9,4 +9,6 @@ const Vec3 VERTICAL_EARTH_RADIUS(EARTH_RADIUS, 0.0, 0.0);
 constexpr double SEA_LEVEL_PRESSURE = 101325.0;
 constexpr double SEA_LEVEL_TEMPERATURE = 288.15;
 constexpr double AIR_GAS_CONSTANT = 287.05;
+// Earth angular velocity
+constexpr double EARTH_ANGULAR_VELOCITY = 7.9e-5;
 } // namespace Constants
