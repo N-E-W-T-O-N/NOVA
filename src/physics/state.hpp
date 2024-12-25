@@ -9,4 +9,10 @@ struct State {
   State(const Vec3 &pos, const Vec3 &vel, const Vec3 &acc, const double &m,
         const double &t)
       : position(pos), velocity(vel), acceleration(acc), mass(m), time(t) {}
+  State(const Vec3 &pos)
+      : position(pos), mass(0.0), time(0.0) {}
+   
+  double getAltitude() const {
+    return (position-Constants::VERTICAL_EARTH_RADIUS).x();
+  }
 };

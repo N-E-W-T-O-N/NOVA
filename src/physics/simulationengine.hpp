@@ -46,7 +46,7 @@ public:
   }
 
   void step() {
-    double altitude = state_.position.magnitude() - Constants::EARTH_RADIUS;
+    double altitude = state_.getAltitude(); 
     double pressure = Atmosphere::getPressure(altitude);
 
     // Update thrust direction to point away from Earth

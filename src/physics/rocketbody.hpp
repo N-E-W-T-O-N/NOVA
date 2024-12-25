@@ -15,12 +15,13 @@ private:
   double wetMass_;         // Mass with full fuel (kg)
   double dryMass_;         // Mass without fuel (kg)
   double fuelMass_;        // Current fuel mass (kg)
+  Vec3 referenceLine_;     // Direction for the chord line of the aeroplane
 
 public:
   RocketBody(double len, double dia, double wetM, double dryM)
       : length_(len), diameter_(dia), referenceArea_(3.14159 * dia * dia / 4.0),
         dragCoefficient_(0.0), liftCoefficient_(0.0), centerOfMass_(0, 0, 0),
-        mass_(wetM), wetMass_(wetM), dryMass_(dryM), fuelMass_(wetM - dryM) {
+        mass_(wetM), wetMass_(wetM), dryMass_(dryM), fuelMass_(wetM - dryM), referenceLine_(1, 0, 0) {
     if (dryMass_ >= wetMass_) {
       throw std::invalid_argument("Dry mass must be less than wet mass");
     }
@@ -29,6 +30,17 @@ public:
     }
   }
 
+  RocketBody(double len, double dia, double wetM, double dryM, Vec3 refLine)
+      : length_(len), diameter_(dia), referenceArea_(3.14159 * dia * dia / 4.0),
+        dragCoefficient_(0.0), liftCoefficient_(0.0), centerOfMass_(0, 0, 0),
+        mass_(wetM), wetMass_(wetM), dryMass_(dryM), fuelMass_(wetM - dryM), referenceLine_(refLine) {
+    if (dryMass_ >= wetMass_) {
+      throw std::invalid_argument("Dry mass must be less than wet mass");
+    }
+    if (dryMass_ <= 0 || wetMass_ <= 0) {
+      throw std::invalid_argument("Masses must be positive");
+    }
+  }
   // Getters
   double getLength() const { return length_; }
   double getDiameter() const { return diameter_; }
@@ -40,6 +52,7 @@ public:
   double getDryMass() const { return dryMass_; }
   double getCurrentFuelMass() const { return fuelMass_; }
   Vec3 getCenterOfMass() const { return centerOfMass_; }
+  Vec3 getReferenceLine() const { return referenceLine_; }
 
   // Calculate remaining fuel percentage
   double getFuelRemainingPercentage() const {

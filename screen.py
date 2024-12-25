@@ -299,7 +299,7 @@ class EnhancedRocketVisualizer:
         self.setup_main_view()
         
         # Draw rocket
-        rocket = self.draw_rocket(0, current_data['Altitude'], current_data['Velocity_Magnitude'])
+        rocket = self.draw_rocket(current_data['Displacement_Y'], current_data['Altitude'], current_data['Velocity_Magnitude'])
         self.ax_main.add_patch(rocket)
         
         # Update trajectory plot

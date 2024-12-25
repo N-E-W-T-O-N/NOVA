@@ -15,7 +15,7 @@ public:
     if (velocityMagnitude < 1e-6)
       return Vec3();
 
-    double altitude = state.position.magnitude() - Constants::EARTH_RADIUS;
+    double altitude = state.getAltitude();
     double airDensity = Atmosphere::getDensity(altitude);
     double temperature = Atmosphere::getTemperature(altitude);
 
@@ -23,9 +23,8 @@ public:
         AeroConstants::GAMMA * AeroConstants::AIR_GAS_CONSTANT * temperature);
     double machNumber = velocityMagnitude / soundSpeed;
 
-    Vec3 verticalAxis(0, 0, 1);
     double angleOfAttack = std::acos(
-        std::abs(relativeVelocity.dot(verticalAxis)) / velocityMagnitude);
+        std::abs(relativeVelocity.dot(rocket.getReferenceLine())) / velocityMagnitude);
 
     rocket.updateAeroCoefficients(machNumber, angleOfAttack);
 
@@ -37,7 +36,9 @@ public:
         dragDirection * (dynamicPressure * rocket.getReferenceArea() *
                          rocket.getDragCoefficient());
 
-    Vec3 liftDirection = relativeVelocity.cross(verticalAxis).normalize();
+    Vec3 liftDirection = relativeVelocity.cross(
+      rocket.getReferenceLine()
+    ).normalize();
     Vec3 liftForce =
         liftDirection * (dynamicPressure * rocket.getReferenceArea() *
                          rocket.getLiftCoefficient());
