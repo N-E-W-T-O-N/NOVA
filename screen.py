@@ -388,7 +388,7 @@ class EnhancedRocketVisualizer:
             self.fig,
             self.update,
             frames=len(self.data),
-            interval=100,  # Updated to 1 second interval
+            interval=1000,  # Updated to 1 second interval
             blit=True
         )
         plt.show()
