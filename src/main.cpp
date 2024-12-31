@@ -34,9 +34,11 @@ void parseConfig(const std::string& fileToOpen, RocketBody& rocket, PropulsionSy
 
 int main() {
   try {
-
-    RocketBody rocket(0,0,2,1); // to not trigger error of dry mass > wet mass
+    // Initialize rocket configuration
+    RocketBody rocket(0, 0, 2, 1,     // to not trigger error of dry mass > wet mass
+                  Vec3(5, 1, 0));     // Direction of the reference line of rocket
     PropulsionSystem propulsion(0);
+    propulsion.updateThrustDirection(Vec3(1, 1, 0)); // Direction of thrust of the rocket
     parseConfig("src/config.json", rocket, propulsion);
 
     // Set initial state (100m above Earth's surface)
@@ -57,7 +59,7 @@ int main() {
     std::ofstream dataFile("flight_data.csv");
     dataFile << std::fixed << std::setprecision(6);
     dataFile
-        << "Time,Altitude,Velocity_X,Velocity_Y,Velocity_Z,Velocity_Magnitude,"
+        << "Time,Altitude,Displacement_Y,Velocity_X,Velocity_Y,Velocity_Z,Velocity_Magnitude,"
         << "Acceleration_X,Acceleration_Y,Acceleration_Z,Acceleration_"
            "Magnitude,"
         << "Mass,Fuel_Ratio,Air_Density,Air_Pressure,Temperature,"
@@ -69,7 +71,8 @@ int main() {
       const State &state = sim.getState();
 
       // Calculate current conditions
-      double altitude = state.position.magnitude() - Constants::EARTH_RADIUS;
+      double altitude = state.getAltitude(); // Altitude above sea level
+      double displacement_y = state.position.y(); // Displacement in y direction
       double velocity_mag = state.velocity.magnitude();
       double accel_mag = state.acceleration.magnitude();
       double air_density = Atmosphere::getDensity(altitude);
@@ -83,7 +86,7 @@ int main() {
 
       // Log data every second
       if (std::fmod(sim.getTime(), 1.0) < 0.01) {
-        dataFile << sim.getTime() << "," << altitude << ","
+        dataFile << sim.getTime() << "," << altitude << "," << displacement_y << ","
                  << state.velocity.x() << "," << state.velocity.y() << ","
                  << state.velocity.z() << "," << velocity_mag << ","
                  << state.acceleration.x() << "," << state.acceleration.y()

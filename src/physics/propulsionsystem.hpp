@@ -4,6 +4,10 @@
 #include <memory>
 #include <vector>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 class PropulsionSystem {
 private:
   std::vector<std::unique_ptr<Engine>> engines_;
@@ -18,7 +22,7 @@ public:
   // Default constructor
   PropulsionSystem(double initialFuel, double maxGimbalAngleDeg = 5.0)
       : totalFuelMass_(initialFuel), initialFuelMass_(initialFuel),
-        thrustDirection_(0, 0, 1) // Default thrust direction (up)
+        thrustDirection_(1, 0, 0) // Default thrust direction (up)
         ,
         gimbalAngleX_(0), gimbalAngleY_(0),
         maxGimbalAngle_(maxGimbalAngleDeg * M_PI / 180.0) {}

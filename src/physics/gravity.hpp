@@ -5,7 +5,7 @@
 class Gravity {
 public:
   static Vec3 getAcceleration(const Vec3 &position) {
-    double altitude = position.magnitude() - Constants::EARTH_RADIUS;
+    double altitude = State(position).getAltitude(); 
     if (altitude < 0)
       altitude = 0.0;
     double r = position.magnitude();
