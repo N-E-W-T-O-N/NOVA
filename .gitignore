@@ -1,8 +1,9 @@
 nova
+nova.exe
 .DS_Store
 .venv
 src/.DS_Store
 src/math/.DS_Store
 src/physics/.DS_Store
 flight_data.csv
-nova.exe
+__pycache__

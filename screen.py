@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import Arc, Circle, FancyArrowPatch, Rectangle
-
+from flightdata import generate_flight_data
 
 class EnhancedRocketVisualizer:
     def __init__(self, csv_file):
@@ -394,5 +394,6 @@ class EnhancedRocketVisualizer:
         plt.show()
 
 if __name__ == "__main__":
+    generate_flight_data()
     visualizer = EnhancedRocketVisualizer('flight_data.csv')
     visualizer.animate()
